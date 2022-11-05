@@ -595,30 +595,29 @@ function setup()
 		switch(event.code) {
 			case "KeyS":
 			case "ArrowDown":
-				if (direction !== "U")
-					direction = "D";
+				if (direction !== "U") direction = "D";
+				event.preventDefault();
 			 	break;
 			case "KeyW":
 			case "ArrowUp":
-				if (direction !== "D")
-					direction = "U";
+				if (direction !== "D") direction = "U";
+				event.preventDefault();
 			 	break;
 			case "KeyA":
 			case "ArrowLeft":
-				if (direction !== "R")
-					direction = "L";
+				if (direction !== "R") direction = "L";
+				event.preventDefault();
 			 	break;
 			case "KeyD":
 			case "ArrowRight":
-				if (direction !== "L")
-					direction = "R";
+				if (direction !== "L") direction = "R";
+				event.preventDefault();
 			 	break;
 			case "Escape":
 				togglePause();
+				event.preventDefault();
 				break;
 		}
-
-		event.preventDefault();
 	});
 
 	document.addEventListener('touchstart', event => {
