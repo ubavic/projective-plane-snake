@@ -3,15 +3,9 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Snake On the Projective Plane</title>
-		<meta name="description" content="Clasic game snake located in real projective plane.">
+		<meta name="description" content="Classic game snake located in real projective plane.">
 		<meta name="author" content="Nikola Ubavić">
 		<meta name="robots" content="index,follow"/>
-		<meta property="og:title" content="Snake"/>
-		<meta property="og:type" content="website"/>
-		<meta property="og:url" content="http://alas.matf.bg.ac.rs/~mm16310/software/snake/"/>
-		<meta property="og:site_name" content="Nikola Ubavić"/>
-		<meta property="og:description" content="Clasic game snake located in real projective plane."/>
-		<meta property="og:image" content="http://alas.matf.bg.ac.rs/~mm16310/software/snake/img/snakeIcon.png"/>
 		<link rel="icon" type="image/x-icon" href="./img/favicon.ico">
 		<link rel="apple-touch-icon" href="./img/snakeIcon.png"/>
 		<meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,27 +14,27 @@
 		<link href="https://fonts.googleapis.com/css?family=Atma:400,700&display=swap" rel="stylesheet">
 	</head>
 	<body>
-		<h1>Snake On the Projective Plane</h1>
 		<main>
 			<div class="menu" id="gameVictory">
 				<div class="menuTitle">Congratulation!</div>
 				<p>Your score is:<br> <span id="length1">0</span>m &#215; <span id="cash1">0</span>&#162; &#215; 100 = <span id="score1">0</span>m&#162; </p>
-				<div onclick="StartGame()" class="button">Play again</div>
+				<div onclick="startGame()" class="button">Play again</div>
 			</div>
 			<div class="menu" id="gameOver">
 				<div class="menuTitle">Game Over!</div>
 				<p>Your score is: <span id="score2"></span></p>
-				<div onclick="StartGame()" class="button">New game</div>
+				<div onclick="startGame()" class="button">New game</div>
 			</div>
 			<div class="menu" id="gamePaused">
 				<div class="menuTitle">Game paused!</div>
-				<div onclick="TogglePause()" class="button">Continue game</div>
+				<div onclick="togglePause()" class="button">Continue game</div>
 			</div>
 			<div class="menu" id="startGame" style="display: block;">
+				<h1>Snake On the Projective Plane</h1>
 				<p>This game is played in the fundamental polygon of the real projective plane. Use arrows or <em>W</em>, <em>A</em>, <em>S</em>, <em>D</em> keys to control snake direction. The objective of the game is to grow more than 10m. Additional rules are given <a href="#rules">below</a></p>
 				<p id="rules">Since real projective plane is non-orientable, our snake can smoothly change orientation along its path. The orientation of the snake is represented by the color of the snake's eye (you can think that one of the snake eyes is red and the other one is blue). If the snake eats the food of the same orientation, then the snake enlarges by 0.1m. If the snake eats the food of the opposite orientation, then the snake shrinks by 0.1m. As the snake grows, it is becoming stronger and faster, so you most start collecting coins to retain speed. When the snake bites itself, it defines one loop in the projective plane. Since the fundamental group of the projective plane is <strong>Z</strong>/2<strong>Z</strong>, there are two possible outcomes: if our snake defines a trivial loop, the game is over; otherwise, the game is continued but loose part of the snake tail is removed, and snake potentially becomes shorter.</p>
 				<p>A detailed explanation of the math behind the game can be found <a href="https://ubavic.rs/work/snake_in_the_projective_plane/?lang=en">here</a>.</p>
-				<div onclick="StartGame()" class="button">New game</div>
+				<div onclick="startGame()" class="button">New game</div>
 			</div>
 			<div id="info">
 				<div class="infoBlock" style="float: left;" id="containerLength"><span id="length">0.5</span>m</div>
@@ -48,7 +42,7 @@
 			</div>
 			<canvas id="canvas">Sorry, your browser does not support canvas.</canvas>
 			</main>
-		<footer>© <a href="https://ubavic.rs/?lang=en">Nikola Ubavić</a> 2019–2021</footer>
+		<footer>By <a href="https://ubavic.rs/?lang=en">Nikola Ubavić</a> 2019–2022 &bull; <a href="https://github.com/ubavic/projective-plane-snake">Fork me on GitHub</a> </footer>
 	</body>
 	<script src="./snake.js"></script>
 </html>

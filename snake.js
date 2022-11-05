@@ -1,9 +1,8 @@
-var ctx;
+let ctx;
 const unit = 24;
-var width, height;
+let width, height;
 const padding = 4;
-const palette = 
-	{	
+const palette = {	
 		black  :"#333333",
 		greenD :"#062506",
 		green  :"#043904",
@@ -14,8 +13,7 @@ const palette =
 		purple :"#411671",
 		blue   :"#3390F8"
 	};
-const soundFiles =
-	[
+const soundFiles = [
 		"coin",
 		"coin1",
 		"bite",
@@ -25,32 +23,32 @@ const soundFiles =
 		"jungle",
 		"tail"
 	];
-var sounds = [], snake = [], food = [], coins = [];
-var score, cash, highscore = 0;
-var snakeOrientation = 1;
-var addCell = false, bite = false;
-var direction;
-var game = 0;
-var keyLock = false;
-var time = {now: 0, past: 0, dt: 0, step: 0};
-var clone;
-var speedStep = 200;
-var touchStartX, touchStartY, touchStartTime;
+let sounds = [], snake = [], food = [], coins = [];
+let score, cash, highScore = 0;
+let snakeOrientation = 1;
+let addCell = false, bite = false;
+let direction;
+let game = 0;
+let keyLock = false;
+let time = { now: 0, past: 0, dt: 0, step: 0 };
+let clone;
+let speedStep = 200;
+let touchStartX, touchStartY, touchStartTime;
 
-function MoveSnake()
+function moveSnake()
 {
-	var tail = {
+	let tail = {
 		x : snake[snake.length - 1].x, 
 		y : snake[snake.length - 1].y
 	};
 
-	if (snake[0].d == "U" && snake[1].d == "L" || snake[0].d == "R" && snake[1].d == "D")
+	if (snake[0].d === "U" && snake[1].d === "L" || snake[0].d === "R" && snake[1].d === "D")
 		snake[0].t = 2;
-	else if (snake[0].d == "U" && snake[1].d == "R" || snake[0].d == "L" && snake[1].d == "D")
+	else if (snake[0].d === "U" && snake[1].d === "R" || snake[0].d === "L" && snake[1].d === "D")
 		snake[0].t = 3;
-	else if (snake[0].d == "D" && snake[1].d == "L" || snake[0].d == "R" && snake[1].d == "U")
+	else if (snake[0].d === "D" && snake[1].d === "L" || snake[0].d === "R" && snake[1].d === "U")
 		snake[0].t = 4;
-	else if (snake[0].d == "D" && snake[1].d == "R" || snake[0].d == "L" && snake[1].d == "U")
+	else if (snake[0].d === "D" && snake[1].d === "R" || snake[0].d === "L" && snake[1].d === "U")
 		snake[0].t = 5;
 	else
 		snake[0].t =1;
@@ -67,37 +65,37 @@ function MoveSnake()
 		addCell = false;
 	}
 
-	if (snake[0].d == "L")
+	if (snake[0].d === "L")
 		snake[0].x--;
-	else if (snake[0].d == "R")
+	else if (snake[0].d === "R")
 		snake[0].x++;
-	else if (snake[0].d == "U")
+	else if (snake[0].d === "U")
 		snake[0].y--;
-	else if (snake[0].d == "D")
+	else if (snake[0].d === "D")
 		snake[0].y++;
 
-	if (snake[0].x == -1) {
+	if (snake[0].x === -1) {
 		snake[0].x = width - 1;
 		snake[0].y = height - snake[0].y - 1;
 		snakeOrientation *= -1;
-	} else if (snake[0].x == width) {
+	} else if (snake[0].x === width) {
 		snake[0].x = 0;
 		snake[0].y = height - snake[0].y - 1;
 		snakeOrientation *= -1;
-	} else if (snake[0].y == -1) {
+	} else if (snake[0].y === -1) {
 		snake[0].y = height - 1;
 		snake[0].x = width - snake[0].x - 1;
 		snakeOrientation *= -1;
-	} else if (snake[0].y == height) {
+	} else if (snake[0].y === height) {
 		snake[0].y = 0;
 		snake[0].x = width - snake[0].x - 1;
 		snakeOrientation *= -1;
 	} 
 }
 
-function DrawSnake()
+function drawSnake()
 {
-	var eye1x, eye1y, eye2x, eye2y;
+	let eye1x, eye1y, eye2x, eye2y;
 	ctx.fillStyle = palette.green;
 
 	switch (snake[0].d) {
@@ -134,27 +132,27 @@ function DrawSnake()
 	for (let i = 1; i < snake.length - 1; i++) {
 		switch (snake[i].t) {
 			case 2:
-				DrawArc(snake[i].x * unit + unit, snake[i].y * unit, unit - padding, Math.PI/2, Math.PI/2);
+				drawArc(snake[i].x + 1, snake[i].y, unit - padding, Math.PI/2, Math.PI/2);
 				ctx.fillStyle = palette.white;
-				DrawArc(snake[i].x * unit + unit, snake[i].y * unit, padding, Math.PI/2, Math.PI/2);
+				drawArc(snake[i].x + 1, snake[i].y, padding, Math.PI/2, Math.PI/2);
 				ctx.fillStyle = palette.green;
 				break;
 			case 3:
-				DrawArc(snake[i].x * unit, snake[i].y * unit, unit - padding, 0, Math.PI/2);
+				drawArc(snake[i].x, snake[i].y, unit - padding, 0, Math.PI/2);
 				ctx.fillStyle = palette.white;
-				DrawArc(snake[i].x * unit, snake[i].y * unit, padding, 0, Math.PI/2);
+				drawArc(snake[i].x, snake[i].y, padding, 0, Math.PI/2);
 				ctx.fillStyle = palette.green;
 				break;
 			case 4:
-				DrawArc(snake[i].x * unit + unit, snake[i].y * unit + unit, unit - padding, Math.PI, Math.PI/2);
+				drawArc(snake[i].x + 1, snake[i].y + 1, unit - padding, Math.PI, Math.PI/2);
 				ctx.fillStyle = palette.white;
-				DrawArc(snake[i].x * unit + unit, snake[i].y * unit + unit, padding, Math.PI, Math.PI/2);
+				drawArc(snake[i].x + 1, snake[i].y + 1, padding, Math.PI, Math.PI/2);
 				ctx.fillStyle = palette.green;
 				break;
 			case 5:
-				DrawArc(snake[i].x * unit, snake[i].y * unit + unit, unit - padding, 3/2 * Math.PI, Math.PI/2);
+				drawArc(snake[i].x, snake[i].y + 1, unit - padding, 3/2 * Math.PI, Math.PI/2);
 				ctx.fillStyle = palette.white;
-				DrawArc(snake[i].x * unit, snake[i].y * unit + unit, padding, 3/2 * Math.PI, Math.PI/2);
+				drawArc(snake[i].x, snake[i].y + 1, padding, 3/2 * Math.PI, Math.PI/2);
 				ctx.fillStyle = palette.green;
 				break;
 			default:
@@ -162,30 +160,29 @@ function DrawSnake()
 					ctx.fillRect(snake[i].x * unit, snake[i].y * unit + padding, unit, unit - 2 * padding);
 				else
 					ctx.fillRect(snake[i].x * unit + padding, snake[i].y * unit, unit - 2 * padding, unit);
-
 		}
 	}
 
 	switch (snake[snake.length - 1].t) {
 		case 2:
-			DrawArc(snake[snake.length - 1].x * unit + unit, snake[snake.length - 1].y * unit, unit - padding, Math.PI/2 + ((snake[snake.length-1].d != "U") ? 0 : Math.PI*time.lambda/2), Math.PI*(1-time.lambda)/2);
+			drawArc(snake[snake.length - 1].x + 1, snake[snake.length - 1].y, unit - padding, Math.PI/2 + ((snake[snake.length-1].d != "U") ? 0 : Math.PI*time.lambda/2), Math.PI*(1-time.lambda)/2);
 			ctx.fillStyle = palette.white;
-			DrawArc(snake[snake.length - 1].x * unit + unit, snake[snake.length - 1].y * unit, padding, Math.PI/2 , Math.PI/2);
+			drawArc(snake[snake.length - 1].x + 1, snake[snake.length - 1].y, padding, Math.PI/2 , Math.PI/2);
 			break;
 		case 3:
-			DrawArc(snake[snake.length - 1].x * unit, snake[snake.length - 1].y * unit, unit-padding, ((snake[snake.length - 1].d == "U") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
+			drawArc(snake[snake.length - 1].x, snake[snake.length - 1].y, unit-padding, ((snake[snake.length - 1].d == "U") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
 			ctx.fillStyle = palette.white;
-			DrawArc(snake[snake.length - 1].x * unit, snake[snake.length - 1].y * unit, padding, 0, Math.PI/2);
+			drawArc(snake[snake.length - 1].x, snake[snake.length - 1].y, padding, 0, Math.PI/2);
 			break;
 		case 4:
-			DrawArc(snake[snake.length - 1].x * unit + unit, snake[snake.length - 1].y*unit+unit, unit-padding, Math.PI + ((snake[snake.length - 1].d == "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
+			drawArc(snake[snake.length - 1].x + 1, snake[snake.length - 1].y + 1, unit-padding, Math.PI + ((snake[snake.length - 1].d == "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
 			ctx.fillStyle = palette.white;
-			DrawArc(snake[snake.length - 1].x* unit + unit, snake[snake.length - 1].y*unit+unit, padding, Math.PI + ((snake[snake.length - 1].d == "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
+			drawArc(snake[snake.length - 1].x + 1, snake[snake.length - 1].y + 1, padding, Math.PI + ((snake[snake.length - 1].d == "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
 			break;
 		case 5:
-			DrawArc(snake[snake.length - 1].x * unit, snake[snake.length - 1].y * unit + unit, unit - padding, 3/2 * Math.PI + ((snake[snake.length - 1].d != "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
+			drawArc(snake[snake.length - 1].x, snake[snake.length - 1].y + 1, unit - padding, 3/2 * Math.PI + ((snake[snake.length - 1].d != "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
 			ctx.fillStyle = palette.white;
-			DrawArc(snake[snake.length - 1].x * unit, snake[snake.length - 1].y * unit + unit, padding, 3/2 * Math.PI + ((snake[snake.length - 1].d != "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
+			drawArc(snake[snake.length - 1].x, snake[snake.length - 1].y + 1, padding, 3/2 * Math.PI + ((snake[snake.length - 1].d != "D") ? 0 : Math.PI * time.lambda/2), Math.PI * (1 - time.lambda)/2);
 			break;
 		default:
 			if (snake[snake.length-1].d == "U")
@@ -200,7 +197,7 @@ function DrawSnake()
 	
 	}
 
-	var eyeRadius = (bite) ? unit/6 - Math.sin(Math.PI * time.lambda) * unit / 24 : unit / 6 ; 
+	let eyeRadius = (bite) ? unit/6 - Math.sin(Math.PI * time.lambda) * unit / 24 : unit / 6 ; 
 	ctx.fillStyle = (snakeOrientation > 0) ? palette.blue : palette.red;
 	ctx.strokeStyle = palette.green;
 	ctx.lineWidth = 2;
@@ -214,130 +211,101 @@ function DrawSnake()
 	ctx.lineWidth = 1;
 }
 
-function InArray(array, x, y)
+function inArray(array, x, y)
 {
-	for (var i = 0; i < array.length; i++) {
+	for (let i = 0; i < array.length; i++) {
 		if (x == array[i].x && y == array[i].y)
 			return true;
 	}
 	return false;
 }
 
-function GetRandomFood()
-{
-	var x, y, i;
+function getRandomPoint() {
+	let x, y, i;
 
 	do {
 		x = Math.floor(Math.random() * width);
 		y = Math.floor(Math.random() * height);
 		i++;
-	} while (CheckSnakeSurface(x, y, 0) || InArray(coins, x, y) || InArray(food, x, y) || i > 10)
+	} while (checkSnakeSurface(x, y, 0) || inArray(coins, x, y) || inArray(food, x, y) || i < 10)
 
-	return {
-		x : x,
-		y : y,
+	return { x, y }
+} 
+
+const getRandomFood = () => ({
+		...getRandomPoint(),
 		s : 2,
 		t : 0,
 		o : (Math.random() > 0.5) ? -1 : 1
-	};
-}
+	})
 
-function GetRandomCoin()
-{
-	var x, y, i;
-
-	do {
-		x = Math.floor(Math.random() * width);
-		y = Math.floor(Math.random() * height);
-		i++;
-	} while (CheckSnakeSurface(x, y, 0) || InArray(coins, x, y) || InArray(food, x, y) || i > 10)
-
-	return {
-		x : x,
-		y : y,
+const getRandomCoin = () => ({
+		...getRandomPoint(),
 		s : 0,
 		t : 0,
 		l : 5 + Math.floor(Math.random() * 100)
-	};
-}
+	})
 
-function DrawArc(x, y, r, start, delta)
+function drawArc(x, y, r, start, delta)
 {
-	if (delta < 0)
-		return;
+	if (delta < 0) return;
 	ctx.beginPath();
-	ctx.arc(x, y, r, start, start+delta, false);
-	ctx.lineTo(x, y);
+	ctx.arc(x * unit, y * unit, r, start, start + delta, false);
+	ctx.lineTo(x * unit, y * unit);
 	ctx.closePath();
 	ctx.fill();
 }
 
-function DrawFood()
+function drawPoint(x, y, yOffset, r)
 {
-	ctx.strokeStyle = palette.black;
-	for (var i = 0 ; i < food.length; i++) {
-		ctx.fillStyle = (food[i].o > 0) ? palette.blue : palette.red;
-		switch (food[i].s) {
+	ctx.beginPath();
+	ctx.arc(x * unit + unit/2, (y + yOffset + 1/2) * unit, r * unit, 0, 2 * Math.PI); 
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+}
+
+function drawFood()
+{
+	food.forEach(f => {
+		ctx.fillStyle = (f.o > 0) ? palette.blue : palette.red;
+		switch (f.s) {
 			case -1:
-				ctx.beginPath();
-				ctx.arc(food[i].x * unit + unit/2, food[i].y * unit + unit/2, unit/3 * easeInOut(1, 0, time.lambda), 0, 2 * Math.PI); 
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
+				drawPoint(f.x, f.y, 0, easeInOut(1, 0, time.lambda)/3);
 				break;
 			case 0:
 				break;
 			case 1:
-				ctx.beginPath();
-				ctx.arc(food[i].x * unit + unit/2, food[i].y * unit + unit/2, unit/3, 0, 2 * Math.PI); 
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
+				drawPoint(f.x, f.y, 0, 1/3);
 				break;
 			case 2:
-				ctx.beginPath();
-				ctx.arc(food[i].x * unit + unit/2, food[i].y * unit + unit/2, unit / 3 * easeInOut(0, 1, time.lambda), 0, 2 * Math.PI); 
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
+				drawPoint(f.x, f.y, 0, easeInOut(0, 1, time.lambda)/3);
 				break;
 		}
-	}
+	})
 }
 
-function DrawCoins() 
+function drawCoins() 
 {
 	ctx.fillStyle = palette.yellow;
 	ctx.strokeStyle = palette.orange;
 	ctx.lineWidth = 3;
 	
-	for (var i = 0; i < coins.length; i++){
-		switch (coins[i].s) {
+	coins.forEach(c => {
+		switch (c.s) {
 			case -1:
-				ctx.beginPath();
-				ctx.arc(coins[i].x*unit + unit/2, coins[i].y * unit + unit/2 - unit * 2 * easeOut(0, 1, time.lambda), unit/4, 0, 2 * Math.PI); 
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
+				drawPoint(c.x, c.y, - 2 * easeOut(0, 1, time.lambda), 1/4);
 				break;
 			case 0:
 				break;
 			case 1:
-				ctx.beginPath();
-				ctx.arc(coins[i].x * unit + unit/2, coins[i].y * unit + unit/2, unit/4, 0, 2 * Math.PI); 
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
+				drawPoint(c.x, c.y, 0, 1/4);
 				break;
 			case 2:
-				ctx.beginPath();
-				ctx.arc(coins[i].x * unit + unit/2, coins[i].y * unit + unit/2 - unit * 2 * (1 - easeOutBounce(0, 1, time.lambda)), unit/4, 0, 2 * Math.PI); 
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
+				drawPoint(c.x, c.y, -2 * (1 - easeOutBounce(0, 1, time.lambda)), 1/4);
 				break;
 		}
-	}
+	})
 
 	ctx.lineWidth = 1
 }
@@ -345,19 +313,16 @@ function DrawCoins()
 function animateLabel(element, animation)
 {
 	element.setAttribute("class", animation);
-	setTimeout(
-		function() {
-			element.setAttribute( "class", "");
-		}, 200);
+	setTimeout(() => element.setAttribute( "class", ""), 200);
 }
 
-function CheckColision()
+function checkCollision()
 {
 	bite = 0;
-	for (var i = 0; i < food.length; i++) {
-		if (snake[0].x == food[i].x && snake[0].y == food[i].y) {
+	food.forEach(f => {
+		if (snake[0].x === f.x && snake[0].y === f.y) {
 			bite = 1;
-			if (food[i].o == snakeOrientation) {
+			if (f.o === snakeOrientation) {
 				addCell = true;
 				clone = sounds["bite"].cloneNode(true);
 				clone.volume = 0.3;
@@ -378,14 +343,14 @@ function CheckColision()
 				animateLabel(document.getElementById("containerLength"), "shakeAnimation");
 			}
 
-			food[i].s = -1;
+			f.s = -1;
 		}
-	}
+	})
 
-	for (i = 0; i < coins.length; i++) {
-		if (coins[i].s != 0 && snake[0].x == coins[i].x && snake[0].y == coins[i].y) {
+	coins.forEach(coin => {
+		if (coin.s != 0 && snake[0].x == coin.x && snake[0].y == coin.y) {
 			cash += 1;
-			coins[i].s = -1;
+			coin.s = -1;
 			clone = sounds["coin"].cloneNode(true);
 			clone.volume = 0.3;
 			clone.play();
@@ -393,46 +358,45 @@ function CheckColision()
 			animateLabel(document.getElementById("containerCash"), "popAnimation");
 			speedStep = speedStep + 2;
 		}
-	}
+	})
 
-	var e = CheckSnakeSurface(snake[0].x, snake[0].y, 1);
+	let e = checkSnakeSurface(snake[0].x, snake[0].y, 1);
 	if (e) {
-		if (CheckPath(e))
+		if (checkPath(e))
 			snake.length = e - 1; 
 		else
 			game = 0;
 	}
 }
 
-function CheckPath(k)
+function checkPath(k)
 {
-	var element = 0;
-	for (var i = 0; i < k; i++) {
-		if((snake[i].x == 0 && snake[i + 1].x == width - 1) || (snake[i].y == 0 && snake[i + 1].y == height - 1))
+	let element = 0;
+	for (let i = 0; i < k; i++) {
+		if((snake[i].x === 0 && snake[i + 1].x === width - 1) || (snake[i].y === 0 && snake[i + 1].y === height - 1))
 			element++;
-		else if ((snake[i].x == width - 1 && snake[i + 1].x == 0) || (snake[i].y == height - 1 && snake[i + 1].y == 0))
+		else if ((snake[i].x === width - 1 && snake[i + 1].x === 0) || (snake[i].y === height - 1 && snake[i + 1].y === 0))
 			element--;
 	}
 
 	return element % 2;
 }
 
-function CheckSnakeSurface(x, y, j)
+function checkSnakeSurface(x, y, j)
 {
-	for (var i = j; i < snake.length; i++) {
-		if (x == snake[i].x && y == snake[i].y)
-			return i + 1;
+	for (let i = j; i < snake.length; i++) {
+		if (x === snake[i].x && y === snake[i].y) return i + 1;
 	}
 
 	return 0;
 }
 
-function EndGame()
+function endGame()
 {
 	score = snake.length * cash * 10;
 
-	if (score > highscore) 
-		highscore = score;
+	if (score > highScore) 
+		highScore = score;
 
 	if (snake.length < 100) {
 		document.getElementById("score2").textContent = score;
@@ -449,13 +413,13 @@ function EndGame()
 	sounds["jungle"].volume = 0.05;
 }
 
-function TogglePause()
+function togglePause()
 {
-	if (game == 1) {
+	if (game === 1) {
 		sounds["jungle"].pause();
 		document.getElementById("gamePaused").style.display = "block";
 		game = 2;
-	} else if (game == 2) {
+	} else if (game === 2) {
 		sounds["jungle"].play();
 		document.getElementById("gamePaused").style.display = "none";
 		game = 1;
@@ -463,42 +427,42 @@ function TogglePause()
 	}
 }
 
-function Render()
+function render()
 {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	DrawFood();
-	DrawCoins();
-	DrawSnake();
+	drawFood();
+	drawCoins();
+	drawSnake();
 }
 
-function Logic()
+function logic()
 {
 	snake[0].d = direction;
-	MoveSnake();
-	CheckColision();
+	moveSnake();
+	checkCollision();
 	keyLock = false;
 }
 
-function ChangeStates()
+function changeStates()
 {
-	for (var i = 0; i < food.length; i++){
-		switch (food[i].s) {
+	food.forEach((f, i) => {
+		switch (f.s) {
 			case -1:
-				food[i] = GetRandomFood();
+				food[i] = getRandomFood();
 				break;
 			case 2:
 				food[i].s = 1;
 				break;
 		}
-	}
+	})
 
-	for (i = 0; i < coins.length; i++) {
-		switch (coins[i].s) {
+	coins.forEach((c, i) => {
+		switch (c.s) {
 			case -1:
-				coins[i] = GetRandomCoin();
+				coins[i] = getRandomCoin();
 				break;
 			case 0:
-				if (coins[i].l)
+				if (c.l)
 					coins[i].l--;
 				else
 					coins[i].s = 2;
@@ -510,23 +474,23 @@ function ChangeStates()
 				coins[i].s = 1;
 				break;
 		}
-	}
+	})
 }
 
 function Game()
 {
 	switch (game) {
 		case 0:
-			EndGame();
+			endGame();
 			break;
 		case 1:
 			time.now = timestamp();
 			time.dt = time.now - time.step;
 			time.lambda = time.dt/speedStep;
-			Render();
+			render();
 			if (time.dt > speedStep) {
-				ChangeStates();
-				Logic();
+				changeStates();
+				logic();
 				time.step = time.now;
 			}
 			time.last = time.now;
@@ -537,7 +501,7 @@ function Game()
 	}
 }
 
-function StartGame() 
+function startGame() 
 {
 	if (window.innerHeight < 500)
 		document.getElementById("info").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -550,19 +514,20 @@ function StartGame()
 	food = [];
 	coins = [];
 
-	for (var i = 0; i < 8; i++)
-		food[i] = GetRandomFood();
+	for (let i = 0; i < 8; i++)
+		food[i] = getRandomFood();
 
-	for (i = 0; i < 10; i++)
-		coins[i] = GetRandomCoin();
+	for (let i = 0; i < 10; i++)
+		coins[i] = getRandomCoin();
 
 	direction = "R";
 	game = 1;
 	score = 0;
 	cash = 0;
 	keyLock = false;
+	speedStep = 200;
 	
-	for (var i = 0; i < 5; i++)
+	for (let i = 0; i < 5; i++)
 		snake[i] = {
 			x : Math.floor(width/2) - i,
 			y : Math.floor(height/2),
@@ -581,34 +546,20 @@ function StartGame()
 	Game();
 }
 
-// Following functions are from https://codeincomplete.com/posts/javascript-game-foundations/
+const timestamp = () =>
+	window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
 
-function timestamp()
-{
-	return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
-}
+const interpolate = (a, b, percent) =>
+	a + (b - a) * percent;
 
-function interpolate(a, b, percent)
-{
-	return a + (b - a) * percent;
-}
+const easeIn = (a, b, percent) =>
+	a + (b - a) * Math.pow(percent, 2);
 
-function easeIn(a, b, percent)
-{
-	return a + (b - a) * Math.pow(percent, 2);
-}
+const easeOut = (a, b, percent) =>
+	a + (b - a) * (1 - Math.pow(1 - percent, 2));
 
-function easeOut(a, b, percent)
-{
-	return a + (b - a) * (1 - Math.pow(1 - percent, 2));
-}
-
-function easeInOut(a, b, percent)
-{
-	return a + (b - a) * (-Math.cos(percent * Math.PI)/2 + 0.5);
-}
-
-// Stolen from https://github.com/danro/jquery-easing/blob/master/jquery.easing.js
+const easeInOut = (a, b, percent) =>
+	a + (b - a) * (-Math.cos(percent * Math.PI)/2 + 0.5);
 
 function easeOutBounce(a, b, t)
 {
@@ -624,100 +575,91 @@ function easeOutBounce(a, b, t)
 		}
 }
 
-function Setup()
+function setup()
 {
-	var cvs = document.getElementById("canvas");
+	const cvs = document.getElementById("canvas");
 	ctx = cvs.getContext("2d");
 
-	window.addEventListener("blur",
-		function(event) {
-			if (game == 1) {
-				sounds["jungle"].pause();
-				document.getElementById("gamePaused").style.display = "block";
-				game = 2;
-			}
-		});
-	
+	window.addEventListener("blur", () => {
+		if (game === 1) {
+			sounds["jungle"].pause();
+			document.getElementById("gamePaused").style.display = "block";
+			game = 2;
+		}
+	});
 
-	document.addEventListener("keydown", 
-		function (event) {
-			if (event.defaultPrevented)
-				return
+	document.addEventListener("keydown", event => {
+		if (event.defaultPrevented)
+			return
 
-			switch(event.code) {
-				case "KeyS":
-				case "ArrowDown":
-					if (direction != "U")
-						direction = "D";
-				 	break;
-				case "KeyW":
-				case "ArrowUp":
-					if (direction != "D")
-						direction = "U";
-				 	break;
-				case "KeyA":
-				case "ArrowLeft":
-					if (direction != "R")
-						direction = "L";
-				 	break;
-				case "KeyD":
-				case "ArrowRight":
-					if (direction != "L")
-						direction = "R";
-				 	break;
-				case "Escape":
-					TogglePause();
-					break;
-			}
+		switch(event.code) {
+			case "KeyS":
+			case "ArrowDown":
+				if (direction !== "U")
+					direction = "D";
+			 	break;
+			case "KeyW":
+			case "ArrowUp":
+				if (direction !== "D")
+					direction = "U";
+			 	break;
+			case "KeyA":
+			case "ArrowLeft":
+				if (direction !== "R")
+					direction = "L";
+			 	break;
+			case "KeyD":
+			case "ArrowRight":
+				if (direction !== "L")
+					direction = "R";
+			 	break;
+			case "Escape":
+				togglePause();
+				break;
+		}
 
-			event.preventDefault();
-		});
+		event.preventDefault();
+	});
 
-	document.addEventListener('touchstart',
-		function(event) {
-			if (event.defaultPrevented)
-				return
+	document.addEventListener('touchstart', event => {
+		if (event.defaultPrevented) return
 			
-			touchStartX = event.changedTouches[0].clientX;
-			touchStartY = event.changedTouches[0].clientY;
-			touchStartTime = timestamp();
+		touchStartX = event.changedTouches[0].clientX;
+		touchStartY = event.changedTouches[0].clientY;
+		touchStartTime = timestamp();
 
-			if (game == 1)
-				event.preventDefault();
-		});
+		if (game == 1) event.preventDefault();
+	});
 
-	document.addEventListener('touchend',
-		function(event) {
-			if (event.defaultPrevented)
-				return
+	document.addEventListener('touchend', event => {
+		if (event.defaultPrevented) return
 
-			dX = event.changedTouches[0].clientX - touchStartX;
-			dY = event.changedTouches[0].clientY - touchStartY;
-			dT = timestamp() - touchStartTime;
+		dX = event.changedTouches[0].clientX - touchStartX;
+		dY = event.changedTouches[0].clientY - touchStartY;
+		dT = timestamp() - touchStartTime;
 
-			if (dT < 300) {
-				if (Math.abs(dX) > 50 && Math.abs(dX) > Math.abs(dY)) {
-					if (dX < 0 && direction != "R")
-						direction = "L";
-					else if (dX > 0 && direction != "L")
-						direction = "R";
-				} else if (Math.abs(dY) > 50 && Math.abs(dY) > Math.abs(dX)) {
-					if (dY < 0 && direction != "D")
-						direction = "U";
-					else if (dY > 0 && direction != "U")
-						direction = "D";
-				}
+		if (dT < 300) {
+			if (Math.abs(dX) > 50 && Math.abs(dX) > Math.abs(dY)) {
+				if (dX < 0 && direction != "R")
+					direction = "L";
+				else if (dX > 0 && direction != "L")
+					direction = "R";
+			} else if (Math.abs(dY) > 50 && Math.abs(dY) > Math.abs(dX)) {
+				if (dY < 0 && direction != "D")
+					direction = "U";
+				else if (dY > 0 && direction != "U")
+					direction = "D";
 			}
+		}
 
-			if (game == 1)
-				event.preventDefault();
+		if (game == 1) event.preventDefault();
 
-		});
+	});
  
-	for (var i = 0 ; i < soundFiles.length; i++) {
-		sounds[soundFiles[i]] = document.createElement("audio");
-		sounds[soundFiles[i]].src = "audio/" + soundFiles[i] + ".mp3";
-	}
+	soundFiles.forEach(soundFile => {
+		sounds[soundFile] = document.createElement("audio");
+		sounds[soundFile].src = "audio/" + soundFile + ".mp3";
+	})
 
 	if (window.innerWidth > 970) {
 		cvs.width = 960;
@@ -739,4 +681,4 @@ function Setup()
 	height = cvs.height/unit;
 }
 
-Setup();
+setup();
